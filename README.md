@@ -34,7 +34,7 @@ This is an **asynchronous web scraping API** for [Hacker News](https://news.ycom
 docker-compose up --build -d
 ```
 
-The API will be available at: [http://localhost:3000](http://localhost:3000)
+The API will be available at: [http://localhost:3000](http://localhost:3000)  
 API docs with Swagger available at: [http://localhost:3000/docs#/](http://localhost:3000/docs#/)
 ## 🔍 API Endpoints
 
