@@ -61,3 +61,8 @@ API docs with Swagger available at: [http://localhost:3000/docs#/](http://localh
 
 - Caching is in-memory and resets when the app restarts.
 - The retry mechanism uses exponential backoff (max 5 attempts) for resilience.
+
+## UI Implementation
+
+- Example of how it would look like in a UI  
+![App screenshot](./assets/ui-implementation.png)
