@@ -3,5 +3,5 @@ from app.routes import scraper
 
 app = FastAPI(title="Web Scraper API")
 
-app.include_router(scraper.router, prefix="/posts")
+app.include_router(scraper.router)
 
