@@ -12,6 +12,8 @@ class Post:
     published: Optional[str]
     comments: int
 
+_cached_pages = {} # pages cached
+
 def extract_post_title(post) -> tuple[str, str]:
     try:
         a_tag = post.find("span", class_="titleline").find("a")
@@ -47,7 +49,8 @@ def extract_subtext_data(subtext) -> tuple[int, Optional[str], Optional[str], in
 
     return points, sent_by, published, comments
 
-def get_posts(url: str = "https://news.ycombinator.com/") -> List[dict]:
+def get_posts_by_page(page: int):
+    url: str = f"https://news.ycombinator.com/?p={page}"
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -56,8 +59,7 @@ def get_posts(url: str = "https://news.ycombinator.com/") -> List[dict]:
 
     soup = BeautifulSoup(response.text, "html.parser")
     post_rows = soup.find_all("tr", class_="athing")
-    all_posts = []
-
+    page_posts = []
     for post_html in post_rows:
         subtext = post_html.find_next_sibling("tr")
 
@@ -75,6 +77,20 @@ def get_posts(url: str = "https://news.ycombinator.com/") -> List[dict]:
             published=published,
             comments=comments
         )
-        all_posts.append(asdict(post))
+        page_posts.append(asdict(post))
+    
+    _cached_pages[page] = page_posts
+    return page_posts
+
+def get_posts(page: int) -> List[dict]:
+    global _cached_pages
+    all_posts = []
+    
+    for i in range(page):
+        page_index = i + 1
+        if page_index in _cached_pages:
+            all_posts.extend(_cached_pages[page_index])
+        else:
+            all_posts.extend(get_posts_by_page(page_index))
 
     return all_posts
