@@ -1,8 +1,63 @@
-# web-scraper
-Scrape HackerNews website to find posts
+# 🕸️ Hacker News Scraper API
 
-# Build the Docker image
-docker compose build
+This is an **asynchronous web scraping API** for [Hacker News](https://news.ycombinator.com), built with **FastAPI**. It fetches post data (title, points, author, comments, etc.) from one or multiple pages, using **concurrent requests**, **HTML parsing with BeautifulSoup**, and **caching** to improve performance.
 
-# Run the container
-docker compose up -d
+## 🚀 Features
+
+- ⚡ Asynchronous scraping for fast performance
+- 🔁 Retry mechanism (via [Tenacity](https://tenacity.readthedocs.io/)) to handle connection issues
+- 🧠 In-memory page caching to avoid redundant requests
+- 🧪 Tests using `pytest` and `pytest-asyncio`
+- 🐳 Dockerized with `docker-compose`
+
+## 📦 Project Structure
+
+```
+.
+├── app
+│   ├── main.py                  # FastAPI app entry point
+│   ├── routes/
+│   │   └── scraper.py           # API routes
+│   └── services/
+│       └── scraper_service.py   # Scraping logic
+├── tests/
+│   └── scraper_test.py          # Tests for scraping logic
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+└── README.md
+```
+
+## 🐳 Running with Docker
+
+```bash
+docker-compose up --build -d
+```
+
+The API will be available at: [http://localhost:3000](http://localhost:3000)
+
+## 🔍 API Endpoints
+
+| Method | Path                 | Description                         |
+|--------|----------------------|-------------------------------------|
+| GET    | `/`                  | Get posts from page 1               |
+| GET    | `/{page}`            | Get posts from first `{page}` pages |
+
+- Example: `GET /posts/2` returns posts from page 1 and 2 (approx. 60 posts)
+
+## 🧪 Running Tests
+
+1. Install test dependencies:
+   ```bash
+   pip install pytest pytest-asyncio
+   ```
+
+2. Run tests:
+   ```bash
+   pytest tests/
+   ```
+
+## 💡 Notes
+
+- Caching is in-memory and resets when the app restarts.
+- The retry mechanism uses exponential backoff (max 5 attempts) for resilience.
