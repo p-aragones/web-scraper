@@ -1,7 +1,7 @@
 from fastapi import FastAPI
+from app.routes import scraper
 
-app = FastAPI()
+app = FastAPI(title="Web Scraper API")
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello World!"}
+app.include_router(scraper.router)
+
