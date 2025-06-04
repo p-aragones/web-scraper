@@ -35,7 +35,7 @@ docker-compose up --build -d
 ```
 
 The API will be available at: [http://localhost:3000](http://localhost:3000)
-
+API docs with Swagger available at: [http://localhost:3000/docs#/](http://localhost:3000/docs#/)
 ## 🔍 API Endpoints
 
 | Method | Path                 | Description                         |
