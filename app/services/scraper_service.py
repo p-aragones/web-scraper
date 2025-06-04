@@ -1,4 +1,5 @@
 import httpx
+import asyncio
 from bs4 import BeautifulSoup
 from dataclasses import dataclass, asdict
 from typing import List, Optional
@@ -87,11 +88,17 @@ async def get_posts(page: int) -> List[dict]:
     global _cached_pages
     all_posts = []
     
-    for i in range(page):
-        page_index = i + 1
-        if page_index in _cached_pages:
-            all_posts.extend(_cached_pages[page_index])
+    tasks = {}
+    for i in range(1, page + 1):
+        if i in _cached_pages:
+            all_posts.extend(_cached_pages[i])
         else:
-            all_posts.extend(await get_posts_by_page(page_index))
+            tasks[i] = get_posts_by_page(i)
+
+    if tasks:
+        results = await asyncio.gather(*tasks.values()) #Fetch all pages at the same time to save time
+        for i, posts in zip(tasks.keys(), results):
+            _cached_pages[i] = posts
+            all_posts.extend(posts)
 
     return all_posts
