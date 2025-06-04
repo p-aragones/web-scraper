@@ -1,4 +1,5 @@
 import httpx
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 import asyncio
 from bs4 import BeautifulSoup
 from dataclasses import dataclass, asdict
@@ -50,12 +51,21 @@ def extract_subtext_data(subtext) -> tuple[int, Optional[str], Optional[str], in
 
     return points, sent_by, published, comments
 
+@retry(
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=1, min=1, max=10), #increase wait time between retries
+    retry=retry_if_exception_type(httpx.RequestError)
+)
+async def fetch_with_retry(url: str) -> httpx.Response:
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, timeout=10)
+        response.raise_for_status()
+        return response
+
 async def get_posts_by_page(page: int):
     url: str = f"https://news.ycombinator.com/?p={page}"
     try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url)
-            response.raise_for_status()
+        response = await fetch_with_retry(url)
     except Exception as e:
         return [{"error": str(e)}]
 
