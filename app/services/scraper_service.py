@@ -1,4 +1,4 @@
-import requests
+import httpx
 from bs4 import BeautifulSoup
 from dataclasses import dataclass, asdict
 from typing import List, Optional
@@ -49,11 +49,12 @@ def extract_subtext_data(subtext) -> tuple[int, Optional[str], Optional[str], in
 
     return points, sent_by, published, comments
 
-def get_posts_by_page(page: int):
+async def get_posts_by_page(page: int):
     url: str = f"https://news.ycombinator.com/?p={page}"
     try:
-        response = requests.get(url)
-        response.raise_for_status()
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+            response.raise_for_status()
     except Exception as e:
         return [{"error": str(e)}]
 
@@ -82,7 +83,7 @@ def get_posts_by_page(page: int):
     _cached_pages[page] = page_posts
     return page_posts
 
-def get_posts(page: int) -> List[dict]:
+async def get_posts(page: int) -> List[dict]:
     global _cached_pages
     all_posts = []
     
@@ -91,6 +92,6 @@ def get_posts(page: int) -> List[dict]:
         if page_index in _cached_pages:
             all_posts.extend(_cached_pages[page_index])
         else:
-            all_posts.extend(get_posts_by_page(page_index))
+            all_posts.extend(await get_posts_by_page(page_index))
 
     return all_posts
