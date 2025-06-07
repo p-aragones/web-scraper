@@ -46,11 +46,9 @@ API docs with Swagger available at: [http://localhost:3000/docs#/](http://localh
 - Example: `GET /posts/2` returns posts from page 1 and 2 (approx. 60 posts)
 
 ## 🧪 Running Tests
-
-1. Run tests:
-   ```bash
-   docker-compose run web pytest -s tests/
-   ```
+```bash
+docker-compose run web pytest -s tests/
+```
 
 ## 💡 Notes
 
@@ -60,4 +58,4 @@ API docs with Swagger available at: [http://localhost:3000/docs#/](http://localh
 ## UI Implementation
 
 Example of how it would look like in a UI  
-![App screenshot](./assets/ui-impl.PNG)
+![App screenshot](./assets/ui-impl.png)
