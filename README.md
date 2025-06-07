@@ -64,5 +64,5 @@ API docs with Swagger available at: [http://localhost:3000/docs#/](http://localh
 
 ## UI Implementation
 
-- Example of how it would look like in a UI  
-![App screenshot](./assets/ui-implementation.png)
+Example of how it would look like in a UI  
+![App screenshot](./assets/ui-impl.PNG)
