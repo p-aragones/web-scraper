@@ -47,14 +47,9 @@ API docs with Swagger available at: [http://localhost:3000/docs#/](http://localh
 
 ## 🧪 Running Tests
 
-1. Install test dependencies:
+1. Run tests:
    ```bash
-   pip install pytest pytest-asyncio
-   ```
-
-2. Run tests:
-   ```bash
-   pytest tests/
+   docker-compose run web pytest -s tests/
    ```
 
 ## 💡 Notes
@@ -64,5 +59,5 @@ API docs with Swagger available at: [http://localhost:3000/docs#/](http://localh
 
 ## UI Implementation
 
-- Example of how it would look like in a UI  
-![App screenshot](./assets/ui-implementation.PNG)
+Example of how it would look like in a UI  
+![App screenshot](./assets/ui-impl.PNG)
