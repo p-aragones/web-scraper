@@ -7,6 +7,7 @@ from typing import List, Optional
 
 @dataclass
 class Post:
+    id: int
     title: str
     url: str
     points: int
@@ -15,6 +16,7 @@ class Post:
     comments: int
 
 _cached_pages = {} # pages cached
+_id = 1
 
 def extract_post_title(post) -> tuple[str, str]:
     try:
@@ -63,6 +65,8 @@ async def fetch_with_retry(url: str) -> httpx.Response:
         return response
 
 async def get_posts_by_page(page: int):
+    global _id
+
     url: str = f"https://news.ycombinator.com/?p={page}"
     try:
         response = await fetch_with_retry(url)
@@ -82,6 +86,7 @@ async def get_posts_by_page(page: int):
         points, sent_by, published, comments = extract_subtext_data(subtext)
 
         post = Post(
+            id=_id,
             title=title,
             url=post_url,
             points=points,
@@ -89,6 +94,7 @@ async def get_posts_by_page(page: int):
             published=published,
             comments=comments
         )
+        _id += 1
         page_posts.append(asdict(post))
     
     _cached_pages[page] = page_posts
@@ -96,12 +102,13 @@ async def get_posts_by_page(page: int):
 
 async def get_posts(page: int) -> List[dict]:
     global _cached_pages
-    all_posts = []
+    
+    all_posts = {}
     
     tasks = {}
     for i in range(1, page + 1):
         if i in _cached_pages:
-            all_posts.extend(_cached_pages[i])
+            all_posts[i] = _cached_pages[i]
         else:
             tasks[i] = get_posts_by_page(i)
 
@@ -109,6 +116,6 @@ async def get_posts(page: int) -> List[dict]:
         results = await asyncio.gather(*tasks.values()) #Fetch all pages at the same time to save time
         for i, posts in zip(tasks.keys(), results):
             _cached_pages[i] = posts
-            all_posts.extend(posts)
+            all_posts[i] = posts
 
     return all_posts
